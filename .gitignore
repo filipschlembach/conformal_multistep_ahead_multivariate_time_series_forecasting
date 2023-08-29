@@ -91,3 +91,4 @@ target/
 # Pycharm project files
 /.idea/
 /assets/data_sets/
+/assets/experimental_results/
