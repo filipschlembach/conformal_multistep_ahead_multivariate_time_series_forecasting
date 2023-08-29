@@ -23,11 +23,15 @@ experiment and the storage of the results.
 `.   ├── metrics........................` Package that implements the metrics used to evaluate the experimental
 results.  
 `.   ├── models.........................` Package for classes implementing the different underlying models.  
-`.   ├── scripts........................` <span style="background-color:#FFFF00;">TODO: add description</span>  
+`.   ├── scripts........................` Scripts that start a series of experiments with the desired
+configuration.  
 `.   └── utils..........................` Package containing utilities for plotting the results and for managing
 the experiments' parameters.
 
 ## Getting started
+
+After setting up a python3.10 environment using the `requirements.txt` experiments can be run by executing any of the
+`scripts/[EXPERIMENT_NAME]/run_experiment.py` files.
 
 ## Software Architecture
 
