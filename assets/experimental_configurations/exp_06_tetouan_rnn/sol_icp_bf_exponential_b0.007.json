@@ -1,0 +1,29 @@
+{
+  "name": "off_line_icp",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/exp_06_tetouan_rnn",
+  "setting": "semi_off_line",
+  "start_offset_p": 0.625,
+  "proper_training_set_size": 0.8,
+  "random_split": false,
+  "shuffle_test_set": false,
+  "alpha": [
+    0.9,
+    0.8,
+    0.7,
+    0.6,
+    0.5,
+    0.4,
+    0.3,
+    0.2,
+    0.1,
+    0.05
+  ],
+  "correction": "bonferroni",
+  "weight_function": "exponential",
+  "weight_function_params": {
+    "factor": 1.0,
+    "beta": 0.007
+  },
+  "rolling_window_length": 50
+}

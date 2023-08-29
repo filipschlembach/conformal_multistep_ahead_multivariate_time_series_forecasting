@@ -1,0 +1,9 @@
+{
+    "name": "lin_reg_model",
+    "experiment": "data_set_test",
+    "root_dir": "assets/out",
+    "epochs": 200,
+    "batch_size": 64,
+    "lr": 0.001,
+    "device": "cuda:0"
+}

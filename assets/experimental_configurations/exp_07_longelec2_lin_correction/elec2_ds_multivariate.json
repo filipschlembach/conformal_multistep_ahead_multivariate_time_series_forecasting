@@ -1,0 +1,25 @@
+{
+  "name": "fixed_window_length_ds",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/exp_07_longelec2_lin_correction",
+  "dataset": "elec2",
+  "window_l": 192,
+  "horizon_l": 12,
+  "window_f": [
+    "nswdemand",
+    "vicdemand",
+    "transfer"
+  ],
+  "horizon_f": [
+    "nswdemand",
+    "vicdemand",
+    "transfer"
+  ],
+  "stride": 12,
+  "shuffle_batches": false,
+  "params": {
+    "csv_path": "assets/data_sets/kaggle_elec2/electricity-normalized.csv",
+    "start_idx": 0,
+    "end_idx": 20000
+  }
+}

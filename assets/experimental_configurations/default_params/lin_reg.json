@@ -1,0 +1,9 @@
+{
+  "name": "lin_reg_model",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/out",
+  "epochs": 400,
+  "batch_size": 64,
+  "lr": 0.001,
+  "device": "CHANGE_ME"
+}

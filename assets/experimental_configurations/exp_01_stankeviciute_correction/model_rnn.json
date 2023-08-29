@@ -1,0 +1,10 @@
+{
+  "name": "model_lin_reg",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/exp_01_stankeviciute_correction",
+  "type": "point_rnn",
+  "epochs": 1000,
+  "batch_size": 100,
+  "lr": 0.01,
+  "device": "CHANGE_ME"
+}

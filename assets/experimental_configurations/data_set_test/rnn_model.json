@@ -1,0 +1,11 @@
+{
+    "name": "rnn_model",
+    "experiment": "data_set_test",
+    "root_dir": "assets/out",
+    "epochs": 60,
+    "batch_size": 64,
+    "embedding_size": 96,
+    "lr": 0.001,
+    "rnn_mode": "LSTM",
+    "device": "cuda:0"
+}

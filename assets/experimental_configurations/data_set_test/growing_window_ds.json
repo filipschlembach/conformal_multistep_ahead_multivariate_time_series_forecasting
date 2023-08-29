@@ -1,0 +1,16 @@
+{
+    "name": "growing_window_ds",
+    "experiment": "data_set_test",
+    "root_dir": "assets/out",
+    "dataset": "elec2",
+    "window_l": -1,
+    "horizon_l": 24,
+    "window_f": [
+        "nswdemand"
+    ],
+    "horizon_f": [
+        "nswdemand"
+    ],
+    "stride": 20,
+    "elec2_p": "assets/data_sets/kaggle_elec2/config.json"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "fixed_window_length_ds",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/exp_06_tetouan_rnn",
+  "dataset": "elec2",
+  "window_l": 144,
+  "horizon_l": 6,
+  "window_f": [
+    "Zone 1 Power Consumption",
+    "Zone 2  Power Consumption",
+    "Zone 3  Power Consumption"
+  ],
+  "horizon_f": [
+    "Zone 1 Power Consumption",
+    "Zone 2  Power Consumption",
+    "Zone 3  Power Consumption"
+  ],
+  "stride": 6,
+  "shuffle_batches": false,
+  "params": {
+    "csv_path": "assets/data_sets/power_consumption_of_tetouan_city/power_consumption_of_tetouan_city_normalized.csv",
+    "start_idx": 0,
+    "end_idx": 40000
+  }
+}

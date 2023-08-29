@@ -1,0 +1,14 @@
+{
+  "name": "rnn_model",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/out",
+  "input_size": 1,
+  "output_size": 1,
+  "horizon": 48,
+  "epochs": 1000,
+  "batch_size": 64,
+  "embedding_size": 96,
+  "lr": 0.001,
+  "rnn_mode": "LSTM",
+  "device": "CHANGE_ME"
+}

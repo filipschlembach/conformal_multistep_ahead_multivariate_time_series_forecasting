@@ -1,0 +1,18 @@
+{
+  "name": "stankeviciute_ds",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/stankeviciute_off_line_lin_reg",
+  "dataset": "stankeviciute",
+  "window_l": 15,
+  "horizon_l": 5,
+  "window_f": 1,
+  "horizon_f": 1,
+  "stride": 20,
+  "params": {
+    "n": 2500,
+    "seed_mean": 1,
+    "seed_variance": 2,
+    "memory_factor": 0.9,
+    "noise_factor": 0.2
+  }
+}

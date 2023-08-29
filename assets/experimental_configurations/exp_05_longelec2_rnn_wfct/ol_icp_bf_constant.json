@@ -1,0 +1,25 @@
+{
+  "name": "off_line_icp",
+  "experiment": "CHANGE_ME",
+  "root_dir": "assets/experimental_results/exp_02_elec2_rnn",
+  "setting": "off_line",
+  "start_offset_p": 0.8,
+  "proper_training_set_size": 0.5,
+  "random_split": false,
+  "shuffle_test_set": false,
+  "alpha": [
+    0.9,
+    0.8,
+    0.7,
+    0.6,
+    0.5,
+    0.4,
+    0.3,
+    0.2,
+    0.1,
+    0.05
+  ],
+  "correction": "bonferroni",
+  "weight_function": "constant",
+  "rolling_window_length": 50
+}
