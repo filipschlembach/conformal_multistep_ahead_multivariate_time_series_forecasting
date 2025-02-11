@@ -1,0 +1,23 @@
+{
+  "name": "synth_changepoints",
+  "experiment": "CHANGE_ME",
+  "dataset": "synth_changepoints",
+  "window_l": 3,
+  "horizon_l": 3,
+  "window_f": 4,
+  "horizon_f": 2,
+  "stride": 3,
+  "params": {
+    "n_days": 200,
+    "time_steps_per_day": 24,
+    "change_points": [3600],
+    "betas":[[[0.7, 0],
+               [0.3, 0],
+               [0, 0.4],
+               [0, 0.6]],
+              [[0.7, 0.7],
+               [0.3, 0.3],
+               [0, 0.4],
+               [0, 0.6]]]
+  }
+}

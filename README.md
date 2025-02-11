@@ -1,11 +1,10 @@
 # Conformal Multistep-Ahead Multivariate Time-Series Forecasting
 
-This repository contains the code necessary to reproduce the results of my master's thesis on Conformal Multistep-Ahead
-Multivariate Time-Series Forecasting.
+This repository contains the code necessary to reproduce the results presented in [TODO: ADD ARTICLE HERE]().
 
 ## Structure
 
-The repository contains two main directories.
+The repository contains two main direct+ories.
 `./assests/` contains everything that is not code such as data sets, the configuration files for the experiments and
 their results.
 `./src/` contains the code to process the datasets and run the experiments.
@@ -32,6 +31,38 @@ the experiments' parameters.
 
 After setting up a python3.10 environment using the `requirements.txt` experiments can be run by executing any of the
 `scripts/[EXPERIMENT_NAME]/run_experiment.py` files.
+
+### Environment setup
+
+Using `pyenv` on macOS, a local environment can be created using the following commands.
+
+```shell
+pyenv install 3.10
+pyenv local 3.10
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+export PYTHONPATH=$PYTHONPATH:[...]/conformal_multistep_ahead_multivariate_time_series_forecasting/src
+```
+
+## Run Experiments
+
+After the environment set up, the experiments can be run using the following commands.
+
+### Experiments using synthetic data sets
+
+```shell
+./.venv/bin/python3.10 # TODO: COMPLETE
+```
+
+### Experiments using real world data sets
+
+```shell
+./.venv/bin/python3.10 src/scripts/exp_01_stankeviciute_correction/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_05_longelec2_rnn_wfct/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_06_tetouan_rnn/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_07_longelec2_lin_correction/run_experiment.py
+```
 
 ## Software Architecture
 
