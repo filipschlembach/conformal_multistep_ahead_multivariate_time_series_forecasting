@@ -4,7 +4,7 @@ This repository contains the code necessary to reproduce the results presented i
 
 ## Structure
 
-The repository contains two main direct+ories.
+The repository contains two main directories.
 `./assests/` contains everything that is not code such as data sets, the configuration files for the experiments and
 their results.
 `./src/` contains the code to process the datasets and run the experiments.
@@ -29,21 +29,28 @@ the experiments' parameters.
 
 ## Getting started
 
-After setting up a python3.10 environment using the `requirements.txt` experiments can be run by executing any of the
+The python environment in this project is managed using `pyenv` and `poetry`.
+After setting up a python3.10 environment, the experiments can be run by executing any of the
 `scripts/[EXPERIMENT_NAME]/run_experiment.py` files.
 
 ### Environment setup
 
-Using `pyenv` on macOS, a local environment can be created using the following commands.
+On macOS, a local environment can be created using the following commands.
+
 
 ```shell
 pyenv install 3.10
 pyenv local 3.10
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-export PYTHONPATH=$PYTHONPATH:[...]/conformal_multistep_ahead_multivariate_time_series_forecasting/src
+poetry config virtualenvs.in-project true
+poetry install
+eval $(poetry env activate)
 ```
+
+### Datasets
+
+The real-world data sets are not stores within the repository.
+They have to be downloaded form their original source and be placed in their respective directories.
+Please refer to the readme files in `assets/data_sets/*`.
 
 ## Run Experiments
 
@@ -52,6 +59,7 @@ After the environment set up, the experiments can be run using the following com
 ### Experiments using synthetic data sets
 
 ```shell
+export PYTHONPATH=$PYTHONPATH:./conformal_multistep_ahead_multivariate_time_series_forecasting/src
 ./.venv/bin/python3.10 src/scripts/exp_12_synth_change_point_all_dim_hl3/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_13_synth_change_point_one_dim_hl3/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_22_synth_dist_drift_all_dim_hl3/run_experiment.py
@@ -61,10 +69,15 @@ After the environment set up, the experiments can be run using the following com
 ### Experiments using real world data sets
 
 ```shell
+export PYTHONPATH=$PYTHONPATH:./conformal_multistep_ahead_multivariate_time_series_forecasting/src
 ./.venv/bin/python3.10 src/scripts/exp_05_longelec2_rnn_wfct/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_06_tetouan_rnn/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_07_longelec2_lin_correction/run_experiment.py
 ```
+
+### Result analysis
+
+Each directory in `src/scripts` containing the script to run a set of experiments also contains a notebook to analyse the results and produce the graphs and table found in the article. 
 
 ## Software Architecture
 
