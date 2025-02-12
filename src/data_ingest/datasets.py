@@ -16,6 +16,8 @@ class SyntheticDatasets(str, enum.Enum):
     """
     feldman = 'feldman'
     barber_iid = 'barber_iid'
+    synth_changepoints = 'synth_changepoints'
+    synth_distribution_drift = 'synth_distribution_drift'
     barber_changepoints = 'barber_changepoints'
     barber_distribution_drift = 'barber_distribution_drift'
     stankeviciute = 'stankeviciute'
@@ -232,20 +234,86 @@ class BarberIID(Dataset):
         self.y = [torch.tensor(y_i) for y_i in y]
 
 
+class SyntheticChangepoints(Dataset):
+    # todo: add description
+
+    def __init__(self, window_l: int = 6, horizon_l: int = 6, window_f: int | list = 4, horizon_f: int | list = 2,
+                 stride: int = 6, params: str | dict = None):
+        super().__init__(window_l, horizon_l, window_f, horizon_f, stride, params)
+
+        if not ((self.wl == self.hl) and (self.wl == self.hl)):
+            raise ValueError('For this data set window length, horizon length and stride must be equal.')
+
+        # default parameters
+        self.n_days = 200
+        self.time_steps_per_day = 24
+        self.n_time_steps = self.time_steps_per_day * self.n_days
+        self.change_points = [self.time_steps_per_day * 150, self.n_time_steps]
+        self.betas = [np.array([[0.7, 0],
+                                [0.3, 0],
+                                [0, 0.4],
+                                [0, 0.6]]),
+                      np.array([[0, 0.6],
+                                [0.7, 0],
+                                [0.3, 0],
+                                [0, 0.4]])]
+        if self.params is not None:
+            if 'n_days' in self.params and (isinstance(self.params['n_days'], int)):
+                self.n_days = self.params['n_days']
+            if 'time_steps_per_day' in self.params and (isinstance(self.params['time_steps_per_day'], int)):
+                self.time_steps_per_day = self.params['time_steps_per_day']
+            self.n_time_steps = self.time_steps_per_day * self.n_days
+            if 'change_points' in self.params:
+                self.change_points = self.params['change_points']
+                self.change_points.append(self.n_time_steps)
+            if 'betas' in self.params:
+                self.betas = [np.array(beta) for beta in self.params['betas']]
+        self.base_frequency = self.n_days
+
+        # generating the four features of our objects.
+        x_generating_process = np.zeros((self.n_time_steps, self.wf))
+        x_generating_process[:, 0] = np.sin(
+            np.linspace(0, 2 * np.pi * self.base_frequency, self.n_time_steps))  # sine wave daily
+        x_generating_process[:, 1] = np.sin(
+            np.linspace(0, 2 * np.pi * self.base_frequency / 7, self.n_time_steps))  # sine wave weekly
+        x_generating_process[:, 2] = np.sign(
+            -np.sin(np.linspace(0, 2 * np.pi * self.base_frequency / np.pi, self.n_time_steps)))  # square wave
+        x_generating_process[:, 3] = np.array([1 if i % (7 * 24) < (5 * 24) else -1 for i in range(self.n_time_steps)])
+
+        self.x = []
+        self.y = []
+
+        change_point_i = 0
+        for slice in range(self.n_time_steps // self.s):
+            t_start = slice * self.s
+            t_end = (slice + 1) * self.s
+            if t_start >= self.change_points[change_point_i]:
+                change_point_i += 1
+
+            # ex_i = np.cumsum(np.random.normal(size=(self.wl, self.wf)) / 10, axis=0)
+            # x_i = x_generating_process[t_start:t_end, :] + ex_i
+            x_i = x_generating_process[t_start:t_end, :]
+            ey_i = np.cumsum(np.random.normal(size=(self.hl, self.hf)) / 10, axis=0)
+            y_i = x_i.dot(self.betas[change_point_i]) + ey_i
+
+            self.x.append(torch.tensor(x_i))
+            self.y.append(torch.tensor(y_i))
+
+
 class BarberChangepoints(Dataset):
     """
     source: https://rinafb.github.io/code/nonexchangeable_conformal.zip
     """
 
-    def __init__(self, window_l: int = 1, horizon_l: int = 1, window_f: int | list = 1, horizon_f: int | list = 1,
+    def __init__(self, window_l: int = 1, horizon_l: int = 4, window_f: int | list = 1, horizon_f: int | list = 1,
                  stride: int = 1, params: str | dict = None):
         super().__init__(window_l, horizon_l, window_f, horizon_f, stride, params)
 
         # default parameters from the Barber paper. Future: make these parametric.
-        self.wl = 1
-        self.hl = 1
-        self._wf = 4  # p in the Berber version
-        self._hf = 1
+        # self.wl = 1
+        # self.hl = 1
+        # self._wf = 4  # p in the Berber version
+        # self._hf = 1
 
         t = 2000  # total number of time steps / instances in the data set. N in the Barber version.
         nf = 1.  # noise factor
@@ -261,6 +329,11 @@ class BarberChangepoints(Dataset):
                 nf = self.params['noise_factor']
         else:
             logging.debug('No parameters passed.')
+            # saving the default values if no other parameters are provided.
+            self.params = {
+                't': t,
+                'noise_factor': nf
+            }
 
         x = np.random.normal(size=(t, self.wl, self.wf))
         y = np.zeros((t, self.hl, self.hf))
@@ -284,6 +357,86 @@ class BarberChangepoints(Dataset):
 
         self.x = [torch.tensor(x_i) for x_i in x]
         self.y = [torch.tensor(y_i) for y_i in y]
+
+
+class SyntheticDistributionDrift(Dataset):
+    # todo: add description
+
+    def __init__(self, window_l: int = 6, horizon_l: int = 6, window_f: int | list = 4, horizon_f: int | list = 2,
+                 stride: int = 6, params: str | dict = None):
+        super().__init__(window_l, horizon_l, window_f, horizon_f, stride, params)
+
+        if not ((self.wl == self.hl) and (self.wl == self.hl)):
+            raise ValueError('For this data set window length, horizon length and stride must be equal.')
+
+        # default parameters
+        self.n_days = 200
+        self.time_steps_per_day = 24
+        self.n_time_steps = self.time_steps_per_day * self.n_days
+        self.change_points = [0, self.time_steps_per_day * 150, self.n_time_steps]
+        self.betas = [np.array([[0.7, 0],
+                                [0.3, 0],
+                                [0, 0.4],
+                                [0, 0.6]]),
+                      np.array([[0.7, 0],
+                                [0.3, 0],
+                                [0, 0.4],
+                                [0, 0.6]]),
+                      np.array([[0, 0.6],
+                                [0.7, 0],
+                                [0.3, 0],
+                                [0, 0.4]])]
+        if self.params is not None:
+            if 'n_days' in self.params and (isinstance(self.params['n_days'], int)):
+                self.n_days = self.params['n_days']
+            if 'time_steps_per_day' in self.params and (isinstance(self.params['time_steps_per_day'], int)):
+                self.time_steps_per_day = self.params['time_steps_per_day']
+            self.n_time_steps = self.time_steps_per_day * self.n_days
+            if 'change_points' in self.params:
+                self.change_points = self.params['change_points']
+            if 'betas' in self.params:
+                self.betas = [np.array(beta) for beta in self.params['betas']]
+        self.base_frequency = self.n_days
+
+        # generating the four features of our objects.
+        x_generating_process = np.zeros((self.n_time_steps, self.wf))
+        x_generating_process[:, 0] = np.sin(
+            np.linspace(0, 2 * np.pi * self.base_frequency, self.n_time_steps))  # sine wave daily
+        x_generating_process[:, 1] = np.sin(
+            np.linspace(0, 2 * np.pi * self.base_frequency / 7, self.n_time_steps))  # sine wave weekly
+        x_generating_process[:, 2] = np.sign(
+            -np.sin(np.linspace(0, 2 * np.pi * self.base_frequency / np.pi, self.n_time_steps)))  # square wave
+        x_generating_process[:, 3] = np.array([1 if i % (7 * 24) < (5 * 24) else -1 for i in range(self.n_time_steps)])
+
+        # compute the interpolation for the values of beta between change points
+        self.n_slices = self.n_time_steps // self.s
+        n_changepoints = len(self.change_points)
+        self.beta_series = np.zeros((self.n_time_steps, self.wf, self.hf))
+
+        for ch_p_i in range(n_changepoints - 1):
+            beta_start = self.betas[ch_p_i]
+            beta_end = self.betas[ch_p_i + 1]
+            beta_start_i = self.change_points[ch_p_i]
+            beta_end_i = self.change_points[ch_p_i + 1]
+            n_beta_steps = beta_end_i - beta_start_i
+            self.beta_series[beta_start_i:beta_end_i, :, :] = beta_start + np.outer(
+                np.arange(n_beta_steps) / (n_beta_steps + 1),
+                beta_end - beta_start).reshape(
+                [n_beta_steps, self.wf, self.hf])
+
+        self.x = []
+        self.y = []
+
+        for slice in range(self.n_slices):
+            t_start = slice * self.s
+            t_end = (slice + 1) * self.s
+
+            x_i = x_generating_process[t_start:t_end, :]
+            ey_i = np.cumsum(np.random.normal(size=(self.hl, self.hf)) / 10, axis=0)
+            y_i = x_i.dot(self.beta_series[t_start, :]) + ey_i  # todo: skipping self.s - 1 values of beta like this.
+
+            self.x.append(torch.tensor(x_i))
+            self.y.append(torch.tensor(y_i))
 
 
 class BarberDistributionDrift(Dataset):
@@ -427,6 +580,8 @@ class DatasetFactory(ABC):
     known_ds = {
         # synthetic data sets
         SyntheticDatasets.barber_iid: BarberIID,
+        SyntheticDatasets.synth_changepoints: SyntheticChangepoints,
+        SyntheticDatasets.synth_distribution_drift: SyntheticDistributionDrift,
         SyntheticDatasets.barber_changepoints: BarberChangepoints,
         SyntheticDatasets.barber_distribution_drift: BarberDistributionDrift,
         SyntheticDatasets.feldman: None,  # todo: implement
