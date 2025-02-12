@@ -18,7 +18,7 @@
   "stride": 6,
   "shuffle_batches": false,
   "params": {
-    "csv_path": "assets/data_sets/power_consumption_of_tetouan_city/power_consumption_of_tetouan_city_normalized.csv",
+    "csv_path": "assets/data_sets/power_consumption_of_tetouan_city/Tetuan City power consumption.csv",
     "start_idx": 0,
     "end_idx": 40000
   }

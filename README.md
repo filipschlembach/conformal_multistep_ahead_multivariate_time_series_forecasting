@@ -52,13 +52,15 @@ After the environment set up, the experiments can be run using the following com
 ### Experiments using synthetic data sets
 
 ```shell
-./.venv/bin/python3.10 # TODO: COMPLETE
+./.venv/bin/python3.10 src/scripts/exp_12_synth_change_point_all_dim_hl3/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_13_synth_change_point_one_dim_hl3/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_22_synth_dist_drift_all_dim_hl3/run_experiment.py
+./.venv/bin/python3.10 src/scripts/exp_23_synth_dist_drift_one_dim_hl3/run_experiment.py
 ```
 
 ### Experiments using real world data sets
 
 ```shell
-./.venv/bin/python3.10 src/scripts/exp_01_stankeviciute_correction/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_05_longelec2_rnn_wfct/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_06_tetouan_rnn/run_experiment.py
 ./.venv/bin/python3.10 src/scripts/exp_07_longelec2_lin_correction/run_experiment.py

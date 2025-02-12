@@ -67,6 +67,7 @@ class MeanIntervalWidth(Metric):
         if title is not None:
             plt.title(title)
         plt.legend(loc='lower center', bbox_to_anchor=(0.45, -0.4), ncol=3, fontsize='x-small')
+        # plt.legend(loc='lower center', ncol=2, fontsize='x-small')  # , bbox_to_anchor=(0.45, -0.4)
         plt.xlabel('1 - $\\alpha$')
         plt.ylabel('mean interval width')
         plt.ylim(0)
@@ -233,6 +234,46 @@ class RollingMeanIntervalWidth(RollingMetric):
         plt.clf()
         plt.close('all')
 
+    @staticmethod
+    def comparative_plot(results: list, labels: list[str], a: float = 0.9, title: str = None, save_path: str = None,
+                         display: bool = True, fig_size=(4, 3), y_lim=None,
+                         dotted_v_line_idxs: list[int] | None = None):
+        """
+        Plots multiple result objects onto the same graph.
+        :param results: list of tuples (alpha, interval width)
+        :param labels: labels associated with the different results
+        :param a: alpha value that is compared, only one can be chosen.
+        :param title: title for the graph
+        :param save_path: path where the graph will be saved
+        :param display: show the result ot not
+        :param fig_size: plt figsize
+        :param y_lim: set limits for the y-axis
+        :param dotted_v_line_idxs: idxs for vertical dotted lines to highlight specific points in the results.
+        :return:
+        """
+        plt.figure(figsize=fig_size)
+        for i in range(len(results)):
+            alpha, rmiw, window_end_idx = results[i]
+            for j, al in enumerate(alpha):
+                if al == a:
+                    plt.plot(window_end_idx, rmiw[j], label=labels[i])
+        for v_line_idx in dotted_v_line_idxs:
+            plt.axvline(v_line_idx, color='grey', ls=':')
+        if title is not None:
+            plt.title(title)
+        plt.legend(fontsize='x-small')
+        if y_lim is not None:
+            plt.ylim(y_lim)
+        plt.xlabel('example')  # 'window'
+        plt.ylabel('mean interval\nwidth')
+        plt.tight_layout()
+        if save_path is not None:
+            plt.savefig(save_path)
+        if display:
+            plt.show()
+        plt.clf()
+        plt.close('all')
+
 
 class RollingMeanIntervalWidthByDimension(RollingMetric):
 
@@ -308,6 +349,54 @@ class RollingMeanIntervalWidthByFeature(RollingMetric):
             fig.savefig(save_path)
         if display:
             fig.show()
+        plt.clf()
+        plt.close('all')
+
+    @staticmethod
+    def comparative_plot(results: list, trace_labels: list[str], feature_labels: list[str], a: float = 0.9,
+                         title: str = None, save_path: str = None,
+                         display: bool = True, fig_size=(4, 3), y_lim=None,
+                         dotted_v_line_idxs: list[int] | None = None):
+        """
+        Plots multiple result objects onto the same graph.
+        :param results: list of tuples (alpha, interval width)
+        :param trace_labels: labels associated with the different results
+        :param feature_labels: labels associated with the different features
+        :param a: alpha value that is compared, only one can be chosen.
+        :param title: title for the graph
+        :param save_path: path where the graph will be saved
+        :param display: show the result ot not
+        :param fig_size: plt figsize
+        :param y_lim: set limits for the y-axis
+        :param dotted_v_line_idxs: idxs for vertical dotted lines to highlight specific points in the results.
+        :return:
+        """
+        if dotted_v_line_idxs is None:
+            dotted_v_line_idxs = []
+
+        n_features = results[0][1].shape[2]
+
+        fig, axs = plt.subplots(n_features, 1, sharex=True, figsize=fig_size)
+        for f_i in range(n_features):
+            for i in range(len(results)):
+                alpha, rmiw, window_end_idx = results[i]
+                for j, al in enumerate(alpha):
+                    if al == a:
+                        axs[f_i].plot(window_end_idx, rmiw[j, :, f_i], label=trace_labels[i])
+            for v_line_idx in dotted_v_line_idxs:
+                axs[f_i].axvline(v_line_idx, color='grey', ls=':')
+            if y_lim is not None:
+                axs[f_i].set_ylim(y_lim)
+            axs[f_i].set_ylabel(f'mean interval\nwidth {feature_labels[f_i]}')
+        if title is not None:
+            plt.title(title)
+        plt.legend(fontsize='x-small')
+        axs[-1].set_xlabel('example')  # 'window'
+        plt.tight_layout()
+        if save_path is not None:
+            plt.savefig(save_path)
+        if display:
+            plt.show()
         plt.clf()
         plt.close('all')
 

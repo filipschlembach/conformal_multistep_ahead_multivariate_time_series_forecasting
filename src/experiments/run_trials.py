@@ -135,6 +135,12 @@ def icp_trial(i: int, experiment_name: str, trial_names: list, ds_p: Params, mod
               ))
     icp.fit()  # fitting the underlying model to the proper training set
     icp.cal()  # calibrating the cp on the calibration set
+    with open(os.path.join(experiment_dir, f'cal_x.npy'), 'wb') as f:
+        np.save(f, np.array(icp.cal_x))
+    with open(os.path.join(experiment_dir, f'cal_y.npy'), 'wb') as f:
+        np.save(f, np.array(icp.cal_y))
+    with open(os.path.join(experiment_dir, f'cal_y_hat.npy'), 'wb') as f:
+        np.save(f, np.array(icp.cal_y_hat))
     logger.info(f'ICP parameters:\n{icp_p}')
 
     if icp_p.setting == 'off_line':
@@ -184,7 +190,8 @@ def icp_trial(i: int, experiment_name: str, trial_names: list, ds_p: Params, mod
             logger.error(f'Unexpected error: {sys.exc_info()[0]} in {mtrc.name()}.')
             raise
         finally:
-            logger.error(f'Cold not complete evaluation of {mtrc.name()}.') # todo: fix this, always produces an error mesage in the log
+            logger.error(
+                f'Cold not complete evaluation of {mtrc.name()}.')  # todo: fix this, always produces an error mesage in the log
 
     summary_df = pd.DataFrame({
         'name': [trial_name],

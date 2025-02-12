@@ -74,6 +74,7 @@ class CoverageRate(Metric):
         if title is not None:
             plt.title(title)
         plt.legend(loc='lower center', bbox_to_anchor=(0.45, -0.4), ncol=3, fontsize='x-small')
+        # plt.legend(loc='lower center', ncol=2, fontsize='x-small')  # bbox_to_anchor=(0.45, -0.4),
         plt.xlim([0, 1.1])
         plt.ylim([0, 1.1])
         plt.xlabel('1 - $\\alpha$')
@@ -292,7 +293,8 @@ class RollingCoverageRate(RollingMetric):
 
     @staticmethod
     def comparative_plot(results: list, labels: list[str], a: float = 0.9, title: str = None, save_path: str = None,
-                         display: bool = True, fig_size=(4, 3), alpha_prime: float | None = None):
+                         display: bool = True, fig_size=(4, 3), alpha_prime: float | None = None,
+                         dotted_v_line_idxs: list[int] | None = None, legend_loc: str | None = None):
         """
         Plots multiple result objects onto the same graph.
         :param results: list of tuples (alpha, cr)
@@ -303,8 +305,12 @@ class RollingCoverageRate(RollingMetric):
         :param display: show the result ot not
         :param fig_size: plt figsize
         :param alpha_prime: alternative value for alpha in the plot
+        :param dotted_v_line_idxs: idxs for vertical dotted lines to highlight specific points in the results.
+        :param legend_loc: legend location
         :return:
         """
+        if dotted_v_line_idxs is None:
+            dotted_v_line_idxs = []
         fig = plt.figure(figsize=fig_size)
         for i in range(len(results)):
             alpha, rcr, window_end_idx = results[i]
@@ -314,13 +320,18 @@ class RollingCoverageRate(RollingMetric):
                     plt.plot(window_end_idx, rcr[j], label=labels[i])
         plt.plot(window_end_idx, [1 - a for _ in range(len(window_end_idx))], label=f'$\\alpha$ = {a}',
                  color='gray', linestyle='dotted', alpha=0.7)
+        for v_line_idx in dotted_v_line_idxs:
+            plt.axvline(v_line_idx, color='grey', ls=':')
         if alpha_prime is not None:
             plt.plot(window_end_idx, [1 - alpha_prime for _ in range(len(window_end_idx))],
                      label=f'$\\alpha\'$ = {alpha_prime:.4f}',
                      color='gray', linestyle='dashed', alpha=0.7)
         if title is not None:
             plt.title(title)
-        plt.legend(fontsize='x-small')
+        if legend_loc is not None:
+            plt.legend(loc=legend_loc, fontsize='x-small')
+        else:
+            plt.legend(fontsize='x-small')
         plt.ylim([0, 1.1])
         plt.xlabel('example')  # 'window'
         plt.ylabel('coverage rate')
@@ -456,6 +467,59 @@ class RollingCoverageRateByFeature(RollingMetric):
             fig.savefig(save_path)
         if display:
             fig.show()
+        plt.clf()
+        plt.close('all')
+
+    @staticmethod
+    def comparative_plot(results: list, trace_labels: list[str], feature_labels: list[str], a: float = 0.9,
+                         title: str = None, save_path: str = None,
+                         display: bool = True, fig_size=(4, 3), alpha_prime: float | None = None,
+                         dotted_v_line_idxs: list[int] | None = None):
+        """
+        Plots multiple result objects onto the same graph.
+        :param results: list of tuples (alpha, cr)
+        :param trace_labels: labels associated with the different results
+        :param feature_labels: labels associated with the different features
+        :param a: alpha value that is compared, only one can be chosen.
+        :param title: title for the graph
+        :param save_path: path where the graph will be saved
+        :param display: show the result ot not
+        :param fig_size: plt figsize
+        :param alpha_prime: alternative value for alpha in the plot
+        :param dotted_v_line_idxs: idxs for vertical dotted lines to highlight specific points in the results.
+        :return:
+        """
+        if dotted_v_line_idxs is None:
+            dotted_v_line_idxs = []
+
+        n_features = results[0][1].shape[2]
+
+        fig, axs = plt.subplots(n_features, 1, sharex=True, figsize=fig_size)
+        for f_i in range(n_features):
+            for i in range(len(results)):
+                alpha, rcr, window_end_idx = results[i]
+                for j, al in enumerate(alpha):
+                    if al == a:
+                        axs[f_i].plot(window_end_idx, rcr[j, :, f_i], label=trace_labels[i])
+            axs[f_i].plot(window_end_idx, [1 - a for _ in range(len(window_end_idx))], label=f'$\\alpha$ = {a}',
+                          color='gray', linestyle='dotted', alpha=0.7)
+            for v_line_idx in dotted_v_line_idxs:
+                axs[f_i].axvline(v_line_idx, color='grey', ls=':')
+            if alpha_prime is not None:
+                axs[f_i].plot(window_end_idx, [1 - alpha_prime for _ in range(len(window_end_idx))],
+                              label=f'$\\alpha\'$ = {alpha_prime}',
+                              color='gray', linestyle='dashed', alpha=0.7)
+            axs[f_i].set_ylim([0, 1.1])
+            axs[f_i].set_ylabel(f'coverage rate {feature_labels[f_i]}')
+        if title is not None:
+            plt.title(title)
+        plt.legend(fontsize='x-small')
+        axs[-1].set_xlabel('example')  # 'window'
+        plt.tight_layout()
+        if save_path is not None:
+            plt.savefig(save_path)
+        if display:
+            plt.show()
         plt.clf()
         plt.close('all')
 

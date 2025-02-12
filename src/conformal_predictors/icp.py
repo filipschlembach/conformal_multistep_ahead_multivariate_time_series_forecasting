@@ -152,6 +152,8 @@ class ICP(ConformalPredictor):
         # computed attributes
         self.proper_train_set: Dataset | None = None
         self.cal_set: Dataset | None = None
+        self.cal_x: list[torch.Tensor] = []  # x for elements in the cal_set # todo: not updated, dirty hack.
+        self.cal_y: list[torch.Tensor] = []  # y for elements in the cal_set # todo: not updated, dirty hack.
         self.cal_y_hat: list[torch.Tensor] | None = None  # y_hat for elements in the cal_set
         self.ncs: list[torch.Tensor] = []  # nonconformity scores for elements in the cal_set
 
@@ -223,6 +225,8 @@ class ICP(ConformalPredictor):
         cal_loader = torch.utils.data.DataLoader(self.cal_set, batch_size=1, shuffle=False)
         for i, cal_example in enumerate(cal_loader):
             y_hat = self.cal_y_hat[i]
+            self.cal_x.append(cal_example[0])
+            self.cal_y.append(cal_example[1])
             score = self.nonconformity(y_hat, cal_example)  # [batch_size, horizon, output_size]
             self.ncs.append(score)
         # use these nonconformity scores to compute the quantiles

@@ -7,8 +7,6 @@ import sys
 
 from experiments.run_trials import icp
 
-os.chdir('../../../')
-
 logging.basicConfig(level=logging.INFO,
                     format='%(name)s[%(levelname)s] %(filename)s:%(lineno)s %(funcName)s() %(message)s')
 
@@ -51,4 +49,5 @@ for ds_setting, ds_params_file in univariate_and_multivariate_ds.items():
         icp_params_path = os.path.join(group_params_dir, icp_params_file)
         experiment_name = f'{ds_setting}_{icp_setting}'
         icp(ds_params_path, model_params_path, icp_params_path, n_trials,
-            root_target_dir=group_out_dir, experiment_name=experiment_name)
+            root_target_dir=group_out_dir, experiment_name=experiment_name,
+            n_threads=10)
