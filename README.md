@@ -77,32 +77,3 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 ### Result analysis
 
 Each directory in `src/scripts` containing the script to run a set of experiments also contains a notebook to analyse the results and produce the graphs and table found in the article. 
-
-## Software Architecture
-
-This software architecture is meant to be modular with little cohesion between the classes that make up the
-different steps in the pipeline.
-These steps are
-
-1. Loading, and preprocessing the data done by the `DataSet` classes (Steps 1 to 3.1 in the sequence diagram)
-2. Generating the prediction interval (Steps 4 to 6.5 in the sequence diagram)
-    1. Initializing the underlying model
-    2. Training the underlying model, if necessary done by the `ConformalPredictor` classes
-    3. Calibrating the prediction intervals done by the `ConformalPredictor` classes
-3. Evaluating the resulting prediction intervals done by the Metric classes (Steps 7 and 7.1 in the sequence diagram)
-
-No direct calls are made to a class belonging to a different step.
-Only data is exchanged between steps, facilitated by the `Controller`, which can be a script or JupyterNotebook and does
-not need to be a dedicated class.
-
-Furthermore, the architecture works in an on-line, off-line and batch setting, as the orchestration of these scenarios
-is left to the controller.
-
-### General Sequence
-
-The general sequence of events is already described by the steps in the previous section.
-Noteworthy is, that this setup is not only suitable for experiments but can be used in a setting, where samples are
-presented sequentially, i.e. it can de deployed in a on-line setting.
-
-<img src="assets/doc/sequence_diagram.png" alt="sequence diagram" width="75%"/>
-
