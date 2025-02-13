@@ -82,7 +82,7 @@ def _icp_semi_off_line(ds: Dataset, icp_p: Params, icp: ICP) -> (dict, torch.Ten
 def _icp_on_line(ds: Dataset, icp_p: Params, icp: ICP) -> (dict, torch.Tensor, torch.Tensor):
     # todo: documentation
     # todo: implement
-    raise RuntimeError(' not yet implemented')
+    raise NotImplementedError()
 
 
 def icp_trial(i: int, experiment_name: str, trial_names: list, ds_p: Params, model_p: Params, icp_p: Params,
@@ -173,12 +173,6 @@ def icp_trial(i: int, experiment_name: str, trial_names: list, ds_p: Params, mod
             metric_results[mtrc.snake_name()].append(score)
             logger.debug(f'Saving {mtrc.name()} evaluation result.')
             mtrc.save(score, os.path.join(experiment_dir, mtrc.snake_name()), logger=logger)
-            # TODO: The plots (matplotlib) seem to be causing a lot of issues. Therefore the creation of plots for every
-            #  trial and metric is commented out until a permanent solution is found.
-            # logger.info(f'Plotting {mtrc.name()} evaluation result.')
-            # mtrc.simple_plot(score, f'{mtrc.name()} {experiment_name} t{i}',
-            #                  os.path.join(experiment_dir, mtrc.snake_name() + '.png'),
-            #                  display=False)
             logger.debug(f'Done evaluating {mtrc.name()}.')
         except ValueError as e:
             logger.error(e)
@@ -189,9 +183,6 @@ def icp_trial(i: int, experiment_name: str, trial_names: list, ds_p: Params, mod
         except:
             logger.error(f'Unexpected error: {sys.exc_info()[0]} in {mtrc.name()}.')
             raise
-        finally:
-            logger.error(
-                f'Cold not complete evaluation of {mtrc.name()}.')  # todo: fix this, always produces an error mesage in the log
 
     summary_df = pd.DataFrame({
         'name': [trial_name],

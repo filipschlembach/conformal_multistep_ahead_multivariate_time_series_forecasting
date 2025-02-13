@@ -152,8 +152,8 @@ class ICP(ConformalPredictor):
         # computed attributes
         self.proper_train_set: Dataset | None = None
         self.cal_set: Dataset | None = None
-        self.cal_x: list[torch.Tensor] = []  # x for elements in the cal_set # todo: not updated, dirty hack.
-        self.cal_y: list[torch.Tensor] = []  # y for elements in the cal_set # todo: not updated, dirty hack.
+        self.cal_x: list[torch.Tensor] = []  # x for elements in the cal_set
+        self.cal_y: list[torch.Tensor] = []  # y for elements in the cal_set
         self.cal_y_hat: list[torch.Tensor] | None = None  # y_hat for elements in the cal_set
         self.ncs: list[torch.Tensor] = []  # nonconformity scores for elements in the cal_set
 
@@ -327,7 +327,7 @@ class ICP(ConformalPredictor):
             raise ValueError(f'Correction method {self.correction} not supported.')
         logging.debug(f'epsilon: {epsilon}')
 
-        # todo: make this entire mess more beautiful and efficient
+        # todo: make this more beautiful and efficient
         if self.weight_f is None:
             # this block is left as a comparison to the standard quantile function which should not be used in the
             # nonexchangeable setting.
@@ -350,12 +350,10 @@ class ICP(ConformalPredictor):
                     values = residuals[:, t, f].detach().cpu().numpy()
                     logging.debug(f'values.shape = {values.shape}')
                     wq_f.append(ICP.weighted_quantile(values, epsilon, weights))
-                wq.append(np.array(wq_f))  # todo: comment on dimensions
-            wq = np.array(wq).T  # todo: comment on dimensions
+                wq.append(np.array(wq_f))
+            wq = np.array(wq).T
             logging.debug(f'wq.shape = {wq.shape}')
 
             for i, a in enumerate(self.alpha):
                 self.q[a] = torch.tensor(wq[i, :]).to(self.device)
                 logging.debug(f'weight_f_named: self.q[a].shape = {self.q[a].shape}')
-
-    # todo: add possibility to save and restore?

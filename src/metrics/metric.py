@@ -66,7 +66,6 @@ class Metric(ABC):
 
         if logger is None:
             logger = logging.getLogger('_secure_save_npz')
-        logger.debug('fisch entering _secure_save_npz')  # todo: remove after debugging
 
         while (n_trials >= 0) and (n_trials < max_trials):
             with save_path.open('wb') as f:
@@ -79,7 +78,6 @@ class Metric(ABC):
                 n_trials += 1
         if n_trials >= max_trials:
             logger.warning(f'could not save {save_path} after {n_trials}, reaching the max number of trials.')
-        logger.debug('fisch leaving _secure_save_npz')  # todo: remove after debugging
 
     @classmethod
     def _secure_save_npy(cls, result: np.ndarray, save_path: str, max_trials: int = 100,
@@ -90,7 +88,6 @@ class Metric(ABC):
 
         if logger is None:
             logger = logging.getLogger('_secure_save_npy')
-        logger.debug('fisch entering _secure_save_npy')  # todo: remove after debugging
 
         while (n_trials >= 0) and (n_trials < max_trials):
             with save_path.open('wb') as f:
@@ -103,7 +100,6 @@ class Metric(ABC):
                 n_trials += 1
         if n_trials >= max_trials:
             logger.warning(f'could not save {save_path} after {n_trials}, reaching the max number of trials.')
-        logger.debug('fisch leaving _secure_save_npy')  # todo: remove after debugging
 
     @classmethod
     def load(cls, save_path: str):

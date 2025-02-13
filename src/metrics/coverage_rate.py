@@ -612,6 +612,6 @@ class CoveredDimensions(Metric):
     @staticmethod
     def comparative_plot(results: list, labels: list[str], title: str = None, save_path: str = None,
                          display: bool = True, fig_size=(4, 4)):
-        # todo: implement similar to the RollingCoverageRate one where one alpha needs to be selected. Thec plot all
+        # todo: implement similar to the RollingCoverageRate one where one alpha needs to be selected. Then plot all
         #  box plots for that value of alpha.
         raise 'Not yet implemented.'

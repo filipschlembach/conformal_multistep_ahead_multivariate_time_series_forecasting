@@ -111,7 +111,7 @@ class PointRNN(torch.nn.Module):
                 loss = criterion(valid_out.float(), y.float())
                 loss.backward()
 
-                train_loss += loss.item()  # todo: figure out why the training loss doesn't relly change despite the model's performance increasing.
+                train_loss += loss.item()
 
                 optimizer.step()
 
